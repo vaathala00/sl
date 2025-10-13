@@ -1,7 +1,7 @@
 const axios = require("axios");
 const fs = require("fs");
 
-const STREAM_URL = "https://solii.saqlainhaider8198.workers.dev";
+const STREAM_URL = "https://solii.saqlainhaider8198.workers.dev/";
 const OUTPUT_FILE = "../stream.m3u"; // Save at root level
 
 async function fetchAndCleanM3U() {

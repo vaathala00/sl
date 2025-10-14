@@ -9,14 +9,27 @@ async function fetchAndSaveM3U() {
     const response = await axios.get(STREAM_URL);
     let data = response.data;
 
-    // Remove unwanted metadata lines
-    data = data
-      .split("\n") // split by line
-      .filter(line => line.startsWith("#EXTINF") || line.startsWith("http")) // keep only EXTINF + URLs
-      .join("\n") // join back
+    // Split into lines
+    let lines = data.split("\n");
 
-    fs.writeFileSync(OUTPUT_FILE, data.trim() + "\n", "utf-8");
+    // Process each line
+    lines = lines
+      .map(line => {
+        // Keep only EXTINF and URLs
+        if (line.startsWith("#EXTINF")) return line;
 
+        if (line.startsWith("http")) {
+          // Remove everything after '|' if present
+          return line.split("|")[0].trim();
+        }
+
+        return null;
+      })
+      .filter(Boolean) // remove nulls or empty lines
+      .join("\n");
+
+    // Save to file
+    fs.writeFileSync(OUTPUT_FILE, lines.trim() + "\n", "utf-8");
     console.log("✅ Cleaned and saved stream.m3u successfully.");
   } catch (error) {
     console.error("❌ Failed to fetch stream:", error.message);
